@@ -75,6 +75,18 @@
       padding: 4px 8px;
       border-radius: 6px;
     }
+    #date {
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+}
+li .date { 
+  font-size: 13px; 
+  color: #888; 
+  white-space: nowrap; 
+}
     button.del:hover { background: #fff1f0; }
     .footer { margin-top: 14px; font-size: 13px; color: #888; }
     .empty { text-align: center; color: #bbb; padding: 24px 0; }
@@ -85,6 +97,7 @@
     <h1>待办事项</h1>
     <div class="input-row">
       <input id="input" type="text" placeholder="输入要做的事，回车添加">
+      <input id="date" type="date">
       <button class="add" onclick="addTodo()">添加</button>
       <button class="op" onclick="allComplete()">全部完成</button>
       <button class="op" onclick="toggleSort()">排序↑↓</button>
@@ -123,6 +136,16 @@
       save();
       render();
     }
+     function addTodo() {
+  const text = input.value.trim();
+  const dateVal = document.getElementById('date').value;
+  if (!text) return;
+  todos.push({ id: Date.now(), text: text, date: dateVal, done: false });
+  input.value = '';
+  document.getElementById('date').value = '';
+  save();
+  render();
+}
 
     function del(index) {
       todos.splice(index, 1);
@@ -164,6 +187,10 @@
           const span = document.createElement('span');
           span.className = 'text';
           span.textContent = t.text;
+       
+          const dateSpan = document.createElement('span');
+	   dateSpan.className = 'date';
+	  dateSpan.textContent = t.date || '';
 
           const btn = document.createElement('button');
           btn.className = 'del';
@@ -174,6 +201,7 @@
           li.appendChild(span);
           li.appendChild(btn);
           list.appendChild(li);
+  	  li.appendChild(dateSpan);
         });
       }
       const doneCount = todos.filter(t => t.done).length;
