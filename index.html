@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>待办事项</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f2f3f5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+    .todo {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
+      padding: 24px;
+    }
+    h1 { font-size: 22px; margin-bottom: 16px; }
+    .input-row { display: flex; gap: 8px; }
+    #input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+    #input:focus { border-color: #4096ff; }
+    button.add {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #4096ff;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button.add:hover { background: #1677ff; }
+    ul { list-style: none; margin-top: 16px; }
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    li:last-child { border-bottom: none; }
+    li input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+    li .text { flex: 1; font-size: 15px; word-break: break-all; }
+    li.done .text { text-decoration: line-through; color: #999; }
+    button.del {
+      border: none;
+      background: transparent;
+      color: #ff4d4f;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    button.del:hover { background: #fff1f0; }
+    .footer { margin-top: 14px; font-size: 13px; color: #888; }
+    .empty { text-align: center; color: #bbb; padding: 24px 0; }
+  </style>
+</head>
+<body>
+  <div class="todo">
+    <h1>待办事项</h1>
+    <div class="input-row">
+      <input id="input" type="text" placeholder="输入要做的事，回车添加">
+      <button class="add" onclick="addTodo()">添加</button>
+    </div>
+    <ul id="list"></ul>
+    <div class="footer" id="footer"></div>
+  </div>
+
+  <script>
+    let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+
+    const input = document.getElementById('input');
+    const list = document.getElementById('list');
+    const footer = document.getElementById('footer');
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') addTodo();
+    });
+
+    function save() {
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
+    function addTodo() {
+      const text = input.value.trim();
+      if (!text) return;
+      todos.push({ text: text, done: false });
+      input.value = '';
+      save();
+      render();
+    }
+
+    function toggle(index) {
+      todos[index].done = !todos[index].done;
+      save();
+      render();
+    }
+
+    function del(index) {
+      todos.splice(index, 1);
+      save();
+      render();
+    }
+
+    function render() {
+      list.innerHTML = '';
+      if (todos.length === 0) {
+        list.innerHTML = '<li class="empty">暂无待办事项</li>';
+      } else {
+        todos.forEach((t, i) => {
+          const li = document.createElement('li');
+          if (t.done) li.className = 'done';
+
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = t.done;
+          cb.onclick = () => toggle(i);
+
+          const span = document.createElement('span');
+          span.className = 'text';
+          span.textContent = t.text;
+
+          const btn = document.createElement('button');
+          btn.className = 'del';
+          btn.textContent = '删除';
+          btn.onclick = () => del(i);
+
+          li.appendChild(cb);
+          li.appendChild(span);
+          li.appendChild(btn);
+          list.appendChild(li);
+        });
+      }
+      const doneCount = todos.filter(t => t.done).length;
+      footer.textContent = '共 ' + todos.length + ' 项，已完成 ' + doneCount + ' 项';
+    }
+
+    render();
+  </script>
+</body>
+</html>
