@@ -75,7 +75,7 @@
     <div class="input-row">
       <input id="input" type="text" placeholder="输入要做的事，回车添加">
       <button class="add" onclick="addTodo()">添加</button>
-	<button onclick="toggleSort()">排序↑↓</button>	
+ 	<button onclick="allComplete()">全部完成</button>
     </div>
     <ul id="list"></ul>
     <div class="footer" id="footer"></div>
@@ -91,6 +91,13 @@
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') addTodo();
     });
+    function allComplete(){
+  todos.forEach(item=>{
+    item.done = true;
+  })
+  save();
+  render();
+}
 function toggleSort(){
   if(sortAsc){
     todos.sort((a,b)=>a.id - b.id);
@@ -107,7 +114,17 @@ function toggleSort(){
 
     function addTodo() {
       const text = input.value.trim();
-      if (!text) return;
+ function toggleSort(){
+  if(sortAsc){
+    todos.sort((a,b)=>a.id - b.id);
+  }else{
+    todos.sort((a,b)=>b.id - a.id);
+  }
+  sortAsc = !sortAsc;
+  save();
+  render();
+}
+     if (!text) return;
       todos.push({ text: text, done: false });
       input.value = '';
       save();
