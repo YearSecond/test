@@ -101,6 +101,7 @@ li .date {
       <button class="add" onclick="addTodo()">添加</button>
       <button class="op" onclick="allComplete()">全部完成</button>
       <button class="op" onclick="toggleSort()">排序↑↓</button>
+      <button class="op" onclick="clearAll()">全部删除</button>
     </div>
     <ul id="list"></ul>
     <div class="footer" id="footer"></div>
@@ -169,6 +170,15 @@ li .date {
       save();
       render();
     }
+    
+function clearAll() {
+  if (todos.length === 0) return;
+  if (confirm('确定要清空全部待办事项吗？')) {
+    todos = [];
+    save();
+    render();
+  }
+}
 
     function render() {
       list.innerHTML = '';
