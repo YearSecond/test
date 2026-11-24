@@ -43,6 +43,17 @@
       cursor: pointer;
     }
     button.add:hover { background: #1677ff; }
+    button.op {
+      padding: 10px 14px;
+      border: 1px solid #4096ff;
+      border-radius: 8px;
+      background: #fff;
+      color: #4096ff;
+      font-size: 15px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button.op:hover { background: #e6f4ff; }
     ul { list-style: none; margin-top: 16px; }
     li {
       display: flex;
@@ -75,8 +86,8 @@
     <div class="input-row">
       <input id="input" type="text" placeholder="输入要做的事，回车添加">
       <button class="add" onclick="addTodo()">添加</button>
- 	<button onclick="allComplete()">全部完成</button>
-      <button onclick="toggleSort()">排序↑↓</button>	
+      <button class="op" onclick="allComplete()">全部完成</button>
+      <button class="op" onclick="toggleSort()">排序↑↓</button>
     </div>
     <ul id="list"></ul>
     <div class="footer" id="footer"></div>
@@ -85,6 +96,7 @@
   <script>
     let todos = JSON.parse(localStorage.getItem('todos') || '[]');
     let sortAsc = true;
+
     const input = document.getElementById('input');
     const list = document.getElementById('list');
     const footer = document.getElementById('footer');
@@ -92,50 +104,15 @@
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') addTodo();
     });
-<<<<<<< HEAD
-    function allComplete(){
-  todos.forEach(item=>{
-    item.done = true;
-  })
-  save();
-  render();
-}
-function toggleSort(){
-  if(sortAsc){
-    todos.sort((a,b)=>a.id - b.id);
-  }else{
-    todos.sort((a,b)=>b.id - a.id);
-  }
-=======
-    function toggleSort(){
-      if(sortAsc){
-      todos.sort((a,b)=>a.id - b.id);
-     }else{
-       todos.sort((a,b)=>b.id - a.id);
-     }
->>>>>>> feature/sort
-  sortAsc = !sortAsc;
-  save();
-  render();
-}
+
     function save() {
       localStorage.setItem('todos', JSON.stringify(todos));
     }
 
     function addTodo() {
       const text = input.value.trim();
- function toggleSort(){
-  if(sortAsc){
-    todos.sort((a,b)=>a.id - b.id);
-  }else{
-    todos.sort((a,b)=>b.id - a.id);
-  }
-  sortAsc = !sortAsc;
-  save();
-  render();
-}
-     if (!text) return;
-      todos.push({ text: text, done: false });
+      if (!text) return;
+      todos.push({ id: Date.now(), text: text, done: false });
       input.value = '';
       save();
       render();
@@ -149,6 +126,23 @@ function toggleSort(){
 
     function del(index) {
       todos.splice(index, 1);
+      save();
+      render();
+    }
+
+    function allComplete() {
+      todos.forEach(item => { item.done = true; });
+      save();
+      render();
+    }
+
+    function toggleSort() {
+      if (sortAsc) {
+        todos.sort((a, b) => a.id - b.id);
+      } else {
+        todos.sort((a, b) => b.id - a.id);
+      }
+      sortAsc = !sortAsc;
       save();
       render();
     }
